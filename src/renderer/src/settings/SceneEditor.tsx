@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, RotateCcw, X } from 'lucide-react'
+import { Info, Plus, RotateCcw, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -153,6 +153,16 @@ export function SceneEditor({ mode }: { mode: AppMode }) {
             className="w-full min-h-24 max-h-100 bg-white"
             rows={6}
           />
+          {/* Empty is kept as is, so say what it means before the next request */}
+          {!activeScene.prompt.trim() && (
+            <p className="mt-1.5 flex items-start gap-1 text-xs text-gray-700">
+              <Info className="mt-px h-3.5 w-3.5 shrink-0" />
+              <span>
+                提示词为空，该场景发起请求时不附带系统提示词
+                {activeScene.isPreset && '，可点「恢复默认」找回预设内容'}
+              </span>
+            </p>
+          )}
         </div>
       )}
 

@@ -116,9 +116,10 @@ function assembleScenes(saved: PromptScene[], removed: string[]): PromptScene[] 
       .filter((p) => !removed.includes(p.id))
       .map((p) => {
         const kept = saved.find((s) => s.id === p.id)
-        // An emptied (or restored) preset gets its default prompt back. Its mode
-        // always comes from the table, never from the saved copy
-        return kept?.prompt.trim() ? { ...kept, mode: p.mode } : p
+        // An emptied prompt stays empty; a restored preset is not in `saved`, so
+        // it gets its default back. Its mode always comes from the table, never
+        // from the saved copy
+        return kept ? { ...kept, mode: p.mode } : p
       }),
     ...saved.filter((s) => !s.isPreset)
   ]
@@ -131,8 +132,8 @@ function assembleScenes(saved: PromptScene[], removed: string[]): PromptScene[] 
 function composePrompt(scenes: PromptScene[], sceneId: string, mode: AppMode): string {
   const scene = scenes.find((s) => s.id === sceneId && sceneMode(s) === mode)
   if (!scene) return PRESET_SCENE_PROMPTS[DEFAULT_SCENE_ID[mode]]
-  // An emptied preset scene falls back to its default prompt
-  return scene.prompt.trim() || PRESET_SCENE_PROMPTS[scene.id] || ''
+  // An emptied scene, preset or not, sends no prompt; 「恢复默认」 brings a preset's back
+  return scene.prompt.trim()
 }
 
 /** The store keys holding a mode's active scene and the prompt derived from it */
