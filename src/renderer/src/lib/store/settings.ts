@@ -34,21 +34,14 @@ export interface PromptScene {
 }
 
 export const CODING_SCENE_ID = 'coding'
-export const TECH_INTERVIEW_SCENE_ID = 'tech-interview'
-
-/** The scene a mode falls back to when its own is gone */
-const DEFAULT_SCENE_ID: Record<AppMode, string> = {
-  screenshot: CODING_SCENE_ID,
-  conversation: TECH_INTERVIEW_SCENE_ID
-}
 
 /** Default prompts for all preset scenes, maintained as Markdown files under ./prompts */
 export const PRESET_SCENE_PROMPTS: Record<string, string> = {
+  'general-qa': generalQaPrompt,
   [CODING_SCENE_ID]: codingPrompt,
   'english-exam': englishExamPrompt,
   'aptitude-test': aptitudeTestPrompt,
-  'general-qa': generalQaPrompt,
-  [TECH_INTERVIEW_SCENE_ID]: techInterviewPrompt,
+  'tech-interview': techInterviewPrompt,
   'behavioral-interview': behavioralInterviewPrompt,
   'english-interview': englishInterviewPrompt
 }
@@ -57,7 +50,15 @@ export function sceneMode(scene: PromptScene): AppMode {
   return scene.mode ?? 'screenshot'
 }
 
+// A mode's first scene is the one a new install starts on, and the one it falls
+// back to when its active scene is gone
 const createPresetScenes = (): PromptScene[] => [
+  {
+    id: 'general-qa',
+    name: '通用问答',
+    prompt: PRESET_SCENE_PROMPTS['general-qa'],
+    isPreset: true
+  },
   {
     id: CODING_SCENE_ID,
     name: '解算法题',
@@ -77,15 +78,9 @@ const createPresetScenes = (): PromptScene[] => [
     isPreset: true
   },
   {
-    id: 'general-qa',
-    name: '通用问答',
-    prompt: PRESET_SCENE_PROMPTS['general-qa'],
-    isPreset: true
-  },
-  {
-    id: TECH_INTERVIEW_SCENE_ID,
+    id: 'tech-interview',
     name: '技术面试',
-    prompt: PRESET_SCENE_PROMPTS[TECH_INTERVIEW_SCENE_ID],
+    prompt: PRESET_SCENE_PROMPTS['tech-interview'],
     isPreset: true,
     mode: 'conversation'
   },
@@ -131,9 +126,9 @@ function assembleScenes(saved: PromptScene[], removed: string[]): PromptScene[] 
  */
 function composePrompt(scenes: PromptScene[], sceneId: string, mode: AppMode): string {
   const scene = scenes.find((s) => s.id === sceneId && sceneMode(s) === mode)
-  if (!scene) return PRESET_SCENE_PROMPTS[DEFAULT_SCENE_ID[mode]]
-  // An emptied scene, preset or not, sends no prompt; 「恢复默认」 brings a preset's back
-  return scene.prompt.trim()
+  // An emptied scene, preset or not, sends no prompt; 「恢复默认」 brings a preset's back.
+  // The active id always names a scene of its mode (`merge` sees to it on load)
+  return scene?.prompt.trim() ?? ''
 }
 
 /** The store keys holding a mode's active scene and the prompt derived from it */
@@ -399,11 +394,12 @@ const defaultSettings: Settings = {
   customModels: [],
   customModelsByBaseURL: {},
   modelByBaseURL: {},
-  customPrompt: PRESET_SCENE_PROMPTS[CODING_SCENE_ID],
-  conversationPrompt: PRESET_SCENE_PROMPTS[TECH_INTERVIEW_SCENE_ID],
+  // Filled in on rehydrate: each mode starts on its first scene
+  customPrompt: '',
+  conversationPrompt: '',
   scenes: createPresetScenes(),
-  activeSceneId: CODING_SCENE_ID,
-  conversationSceneId: TECH_INTERVIEW_SCENE_ID,
+  activeSceneId: '',
+  conversationSceneId: '',
   removedPresetSceneIds: [],
 
   opacity: 0.8,

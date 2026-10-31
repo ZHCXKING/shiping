@@ -20,18 +20,21 @@ test('an emptied preset prompt is saved as empty and survives a restart', () => 
   }
   try {
     const { useSettingsStore: store } = load('src/renderer/src/lib/store/settings.ts', prompts)
-    const coding = () => store.getState().scenes.find((s) => s.id === 'coding')
-    assert.equal(store.getState().activeSceneId, 'coding')
-    assert.equal(store.getState().customPrompt, 'fixture prompt coding.md')
+    const generalQa = () => store.getState().scenes.find((s) => s.id === 'general-qa')
+    // A new install starts each mode on its first scene
+    assert.equal(store.getState().activeSceneId, 'general-qa')
+    assert.equal(store.getState().customPrompt, 'fixture prompt general-qa.md')
+    assert.equal(store.getState().conversationSceneId, 'tech-interview')
+    assert.equal(store.getState().conversationPrompt, 'fixture prompt tech-interview.md')
 
     // Whitespace counts as empty: nothing is sent, but what was typed is kept
-    store.getState().updateScenePrompt('coding', '  \n')
-    assert.equal(coding().prompt, '  \n')
+    store.getState().updateScenePrompt('general-qa', '  \n')
+    assert.equal(generalQa().prompt, '  \n')
     assert.equal(store.getState().customPrompt, '')
 
     const { useSettingsStore: restarted } = load('src/renderer/src/lib/store/settings.ts', prompts)
-    const restartedCoding = restarted.getState().scenes.find((s) => s.id === 'coding')
-    assert.equal(restartedCoding.prompt, '  \n')
+    const restartedGeneralQa = restarted.getState().scenes.find((s) => s.id === 'general-qa')
+    assert.equal(restartedGeneralQa.prompt, '  \n')
     assert.equal(restarted.getState().customPrompt, '')
     // The other mode's preset is untouched
     assert.equal(restarted.getState().conversationPrompt, 'fixture prompt tech-interview.md')
