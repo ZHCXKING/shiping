@@ -300,6 +300,8 @@ interface Settings {
   /** The server's RELAY_KEY */
   mobileRelayKey: string
 
+  /** Hide app windows from screenshots and screen sharing */
+  stealthEnabled: boolean
   hideDockIcon: boolean
 
   audioInputDeviceId: string
@@ -429,6 +431,7 @@ const defaultSettings: Settings = {
   mobileRelayURL: '',
   mobileRelayKey: '',
 
+  stealthEnabled: true,
   hideDockIcon: false,
 
   audioInputDeviceId: '',

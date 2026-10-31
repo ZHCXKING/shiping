@@ -22,6 +22,7 @@ export function AppearanceSection() {
     showOverlayToolbar,
     hideShortcutHints,
     toolbarHoverDelay,
+    stealthEnabled,
     hideDockIcon,
     updateSetting
   } = useSettingsStore()
@@ -129,23 +130,34 @@ export function AppearanceSection() {
       </SettingsCard>
 
       <SettingsCard Icon={Shield} title="隐私">
-        <div className="space-y-4">
-          <p className="text-sm">
-            此应用为本地应用，采集的图片和语音直接上传到您配置的 OpenAI、阿里云百炼等平台，
-            不经过任何第三方服务器。
-          </p>
+        <div className="flex flex-col gap-5">
+          <Field
+            label="隐身模式"
+            note="默认开启，在截图和屏幕共享中隐藏窗口；关闭后可正常截图和共享，立即生效"
+            noteLayout="stacked"
+          >
+            <Switch
+              aria-label="隐身模式"
+              checked={stealthEnabled}
+              onCheckedChange={(checked) => updateSetting('stealthEnabled', checked)}
+            />
+          </Field>
           {isMac && (
             <Field
               label="隐藏 Dock 图标"
               note="开启后不在程序坞和 Cmd+Tab 切换器中显示，仅可通过快捷键唤起窗口"
+              noteLayout="stacked"
             >
               <Switch
-                className="scale-y-90"
+                aria-label="隐藏 Dock 图标"
                 checked={hideDockIcon}
                 onCheckedChange={(checked) => updateSetting('hideDockIcon', checked)}
               />
             </Field>
           )}
+          <p className="text-xs font-light leading-relaxed">
+            图片和语音仅发送到您配置的 AI 或语音识别平台，不经过识屏的服务器。
+          </p>
         </div>
       </SettingsCard>
     </>

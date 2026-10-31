@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import { BrowserWindow, screen } from 'electron'
 import { is } from '@electron-toolkit/utils'
+import { registerStealthWindow } from './window-privacy'
 
 /** Room for every button of the longer mode's toolbar: 16 × 28px, 2px gaps, 8px padding each side */
 const TOOLBAR_WIDTH = 494
@@ -61,7 +62,7 @@ export function createToolbarWindow(parent: BrowserWindow): void {
     visibleOnFullScreen: true,
     skipTransformProcessType: true
   })
-  toolbarWindow.setContentProtection(true)
+  registerStealthWindow(toolbarWindow, '识屏 · 悬浮工具条')
 
   parent.on('move', syncToolbarBounds)
   parent.on('resize', syncToolbarBounds)

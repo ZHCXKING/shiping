@@ -28,8 +28,9 @@ export default function App() {
 
   useEffect(() => {
     window.api.getAppSettings().then((settings) => {
+      // Main starts with stealth on; a persisted "off" must win over that default.
       const blankFields = Object.keys(settings).filter(
-        (key) => settings[key] && !settingsStore[key]
+        (key) => key !== 'stealthEnabled' && settings[key] && !settingsStore[key]
       )
       settingsStore.syncSettings(
         blankFields.reduce(

@@ -1,7 +1,7 @@
 import { globalShortcut, ipcMain, screen } from 'electron'
 import type { BrowserWindow } from 'electron'
 import type { ModelMessage } from 'ai'
-import { applyContentProtection } from './main-window'
+import { applyContentProtection } from './window-privacy'
 import {
   showToolbar,
   hideToolbar,

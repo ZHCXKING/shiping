@@ -4,6 +4,7 @@ import type { ApiProfile, AppMode } from '../shared/api-profile'
 import type { HintMode } from '../shared/conversation'
 import { setToolbarOpacity, syncToolbarSettings } from './toolbar-window'
 import { DEFAULT_PROXY, normalizeProxySettings } from '../shared/proxy'
+import { setStealthEnabled } from './window-privacy'
 
 ipcMain.handle('getAppVersion', () => {
   return app.getVersion()
@@ -27,6 +28,9 @@ ipcMain.handle('updateAppSettings', (_event, _settings) => {
   }
   const previous = { ...settings }
   Object.assign(settings, _settings)
+  if (settings.stealthEnabled !== previous.stealthEnabled) {
+    setStealthEnabled(settings.stealthEnabled)
+  }
   for (const listener of settingsListeners) listener(previous)
   if ('hideDockIcon' in _settings) {
     applyDockVisibility(settings.hideDockIcon)
@@ -134,6 +138,8 @@ export const settings = {
   mobileRelayURL: '',
   /** The server's RELAY_KEY */
   mobileRelayKey: '',
+  /** Hide app windows from screenshots and screen sharing; the renderer persists this preference */
+  stealthEnabled: true,
   hideDockIcon: false,
   audioInputDeviceId: '',
   audioOutputDeviceId: ''

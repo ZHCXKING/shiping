@@ -266,7 +266,9 @@ Adding a settings key needs no `version` bump: zustand shallow-merges the persis
 
 ### Window Stealth
 
-The app is designed to be invisible to screen-sharing software:
+`stealthEnabled` defaults to `true`, is persisted by the renderer, and can be toggled in 「界面与隐私 → 隐身模式」 without restarting. `src/main/window-privacy.ts` registers the main window, toolbar and region pickers so current and newly created windows follow it. Disabling restores capture visibility and window titles, plus the main window's taskbar / Mission Control entry; `hideDockIcon` remains independent. Startup settings sync must not overwrite a persisted `false` with main's `true` default.
+
+When enabled, the app is designed to be invisible to screen-sharing software:
 - `BrowserWindow` options: `transparent: true`, `frame: false`, `skipTaskbar: true`
 - `setContentProtection(true)` prevents screen capture of the window itself
 - `setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true })`

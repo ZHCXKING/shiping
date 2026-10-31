@@ -36,19 +36,30 @@ export function SettingsCard({
 export function Field({
   label,
   note,
+  noteLayout = 'inline',
   children,
   className
 }: {
   label: ReactNode
   note?: ReactNode
+  noteLayout?: 'inline' | 'stacked'
   children: ReactNode
   className?: string
 }) {
   return (
     <div className={cn('flex items-center justify-between gap-4', className)}>
-      <div className="text-sm font-medium">
+      <div className="min-w-0 text-sm font-medium">
         {label}
-        {note && <span className="ml-2 text-xs font-light">{note}</span>}
+        {note && (
+          <span
+            className={cn(
+              'text-xs font-light',
+              noteLayout === 'stacked' ? 'mt-1 block leading-relaxed' : 'ml-2'
+            )}
+          >
+            {note}
+          </span>
+        )}
       </div>
       {children}
     </div>

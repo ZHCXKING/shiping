@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import { app, BrowserWindow, ipcMain, screen, type Display, type NativeImage } from 'electron'
 import { is } from '@electron-toolkit/utils'
+import { registerStealthWindow } from './window-privacy'
 import type { CaptureRegion, RegionRect } from '../shared/capture-region'
 import {
   captureScreens,
@@ -164,11 +165,9 @@ function createPickerWindow(display: Display): BrowserWindow {
     visibleOnFullScreen: true,
     skipTransformProcessType: true
   })
-  window.setContentProtection(true)
+  registerStealthWindow(window, '识屏 · 框选区域')
   // Mixed-DPI setups on Windows can size a window created with bounds slightly off
   window.setBounds(display.bounds)
-  // Untitled, like the main window, so it stays out of screen-share window lists
-  window.on('page-title-updated', (event) => event.preventDefault())
 
   // Closing any one picker, or one that failed, cancels the whole pick: they
   // cover every screen, so none may be left behind

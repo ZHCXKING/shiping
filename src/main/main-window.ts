@@ -2,16 +2,7 @@ import { join } from 'node:path'
 import { shell, BrowserWindow } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { createToolbarWindow } from './toolbar-window'
-
-export function applyContentProtection(window: BrowserWindow, forceReset = false): void {
-  if (!window || window.isDestroyed()) return
-
-  if (forceReset && process.platform === 'win32') {
-    window.setContentProtection(false)
-  }
-
-  window.setContentProtection(true)
-}
+import { applyContentProtection, registerStealthWindow } from './window-privacy'
 
 export function createWindow(): void {
   // Create the browser window.
@@ -51,15 +42,7 @@ export function createWindow(): void {
 
   mainWindow.setMenuBarVisibility(false)
 
-  // Keep the native window title empty. Chromium's window picker (Edge/Chrome
-  // "share a window") enumerates windows with WebRTC's kIgnoreUntitled flag and
-  // drops the ones whose title is empty, so an untitled window never shows up in
-  // the list. setContentProtection only blanks the pixels; it does not hide the
-  // window from enumeration. The window is frameless, so no title is ever drawn.
-  mainWindow.on('page-title-updated', (event) => {
-    event.preventDefault()
-    mainWindow.setTitle('')
-  })
+  registerStealthWindow(mainWindow, '识屏 Shiping', true)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
